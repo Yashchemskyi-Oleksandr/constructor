@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { computed, ComputedRef, ref } from "vue";
 import { Schema } from "./schema";
 import { Textable } from "./textable";
 
@@ -29,6 +29,13 @@ export class Section extends Textable {
 
   set hint(value: string) {
     this._hint.value = value;
+  }
+
+  private _external: ComputedRef<Set<string>>;
+  get external(): Set<string> {
+      this._external ??= computed(() => new Set(Array.from(this.references)
+          .filter(ref => !this.schema.getElement(ref).isInline)));
+      return this._external.value;
   }
 
 
