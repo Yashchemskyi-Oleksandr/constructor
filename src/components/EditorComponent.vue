@@ -26,14 +26,13 @@ class ElInline extends Quill.imports['blots/embed'] {
     super(node);
 
     watch(
-        () => textable.schema.getElement(this.domNode.getAttribute('id')).type,
-        (type) => {
-          console.log('type', type);
-          this.domNode.innerHTML = type;
-        }, {
-          immediate: true,
-          flush: 'sync'
-        }
+        () => {
+          const element = textable.schema.getElement(this.domNode.getAttribute('id'))
+          return element.title || element.type;
+        },
+        (title) => {
+          this.domNode.innerHTML = title;
+        }, {immediate: true}
     );
 
     this.domNode.childNodes.forEach((node) => this.domNode.removeChild(node));
