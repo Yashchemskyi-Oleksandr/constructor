@@ -2,18 +2,18 @@
 
 </script>
 <script setup lang="ts">
-import {QuillEditor} from '@vueup/vue-quill'
-import {computed, onMounted, ref} from "vue";
-import {Element, Textable} from "../schema";
+import { QuillEditor } from '@vueup/vue-quill'
+import { computed, onMounted, ref, shallowRef } from "vue";
+import { Element, Textable } from "../schema";
 import Quill from "quill"
 import ElementEditorComponent from "./ElementEditorComponent.vue";
 import ModalComponent from "./ModalComponent.vue";
 
-const {textable} = defineProps({
+const { textable } = defineProps({
   textable: Textable
 })
 
-const editableElement = ref<Element | null>(null);
+const editableElement = shallowRef<Element | null>(null);
 
 class ElInline extends Quill.imports['blots/embed'] {
   declare contentNode: HTMLElement;
@@ -65,28 +65,29 @@ const text = computed({
 
 const editor = ref(null);
 const quillInstance = ref(null);
+const editorSelectionIndex = ref<number | null>(null);
 onMounted(() => {
   if (editor.value) {
     quillInstance.value = editor.value.getQuill();
   }
 });
 
-let selection;
 function requestAddElement() {
-   selection = [this,this.quill.getSelection()];
-   editableElement.value = new Element(textable.schema);
+  const selection = this.quill.getSelection();
+  editorSelectionIndex.value = selection.index;
+  editableElement.value = new Element(textable.schema);
 }
 
 function addElementToEditor() {
   const isNew = !editableElement.value.id;
 
   textable.schema.addElement(editableElement.value);
-  if(isNew) {
-    selection[0].insertEmbed(
-      selection[1],
-        "code",
-        editableElement.value.id,
-        "api",
+  if (isNew) {
+    quillInstance.value.insertEmbed(
+      editorSelectionIndex.value,
+      "code",
+      editableElement.value.id,
+      "api",
     );
   }
   editableElement.value = null;
@@ -96,11 +97,10 @@ function addElementToEditor() {
 
 <template>
   <div class="editor">
-    <QuillEditor ref="editor" contentType="html"
-                 v-model:content="text"
-                 :modules="{name:'el', module:ElModule}"
-                 :toolbar="{container: [['bold', 'italic', 'underline', 'strike'], ['link', 'image'], ['clean'],['code']], handlers: {code: requestAddElement}}"
-    />
+    <QuillEditor
+      ref="editor" contentType="html"
+      v-model:content="text" :modules="{ name: 'el', module: ElModule }"
+      :toolbar="{ container: [['bold', 'italic', 'underline', 'strike'], ['link', 'image'], ['clean'], ['code']], handlers: { code: requestAddElement } }" />
   </div>
   <ModalComponent v-if="editableElement" @hide="editableElement = null">
     <template #title>{{ editableElement?.label ?? 'New element' }}</template>
