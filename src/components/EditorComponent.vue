@@ -44,7 +44,7 @@ class ElInline extends Quill.imports['blots/embed'] {
     });
     try {
       const element = textable.schema.getElement(this.domNode.getAttribute('id'));
-      this.domNode.innerHTML = element.type ?? 'New element';
+      this.domNode.innerHTML = element.title || element.type;
       this.domNode.setAttribute('type', element.type);
     } catch (e) {
       console.error(e);
@@ -115,24 +115,32 @@ function addElementToEditor() {
       :toolbar="{ container: [['bold', 'italic', 'underline', 'strike'], ['link', 'image'], ['clean'], ['code']], handlers: { code: requestAddElement } }" />
   </div>
   <ModalComponent v-if="editableElement" @hide="editableElement = null">
-    <template #title>{{ editableElement?.label ?? 'New element' }}</template>
-    <template #footer>{{ editableElement?.label ?? 'New element' }}</template>
-    <!-- <ElementEditorComponent :element="editableElement"/> -->
-    editableElement {{ editableElement ?? 'test' }}
+    <template #title>{{ editableElement.title || 'New element' }}</template>
+    <template #footer>
+      <button type="button" @click="addElementToEditor()">{{
+          editableElement.id ? 'Edit element' : 'Add element'
+        }}</button>
+    </template>
     <div>
-      <label for="type">Select Type:</label>
-      <select id="type" v-model="editableElement.type">
-        <option value="text">text</option>
-        <option value="select">select</option>
-        <option value="radio">radio</option>
-      </select>
-      <button type="button" @click="addElementToEditor()">{{ editableElement.id ? 'Edit element' : 'Add element' }}</button>
+      <div v-if="!editableElement.id" class="form-group">
+        <label for="type">Select Type:</label>
+        <select id="type" v-model="editableElement.type">
+          <option value="text">text</option>
+          <option value="select">select</option>
+          <option value="radio">radio</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="title">Title:</label>
+        <input v-model="editableElement.title">
+      </div>
     </div>
   </ModalComponent>
 </template>
 
 <style lang="scss" scoped>
 .editor::v-deep(el) {
+  display: inline;
   width: 100px;
   display: inline-block;
   border-bottom: 1px solid black;
