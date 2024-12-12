@@ -1,12 +1,8 @@
-<script lang="ts">
-
-</script>
 <script setup lang="ts">
 import { QuillEditor } from '@vueup/vue-quill'
 import { computed, onMounted, ref, shallowRef, watch } from "vue";
 import { Element, Textable } from "../schema";
 import Quill from "quill"
-import ElementEditorComponent from "./ElementEditorComponent.vue";
 import ModalComponent from "./ModalComponent.vue";
 
 const { textable, addSectionElement } = defineProps({
@@ -25,6 +21,13 @@ class ElInline extends Quill.imports['blots/embed'] {
   constructor(node) {
     super(node);
 
+    this.domNode.childNodes.forEach((node) => this.domNode.removeChild(node));
+    this.domNode.setAttribute('contenteditable', 'false');
+    this.domNode.addEventListener('click', () => {
+      console.log('click', this.domNode);
+      editableElement.value = Element.fromJSON(textable.schema, textable.schema.getElement(this.domNode.getAttribute('id')).toJSON());
+    });
+
     watch(
         () => {
           const element = textable.schema.getElement(this.domNode.getAttribute('id'))
@@ -34,21 +37,6 @@ class ElInline extends Quill.imports['blots/embed'] {
           this.domNode.innerHTML = title;
         }, {immediate: true}
     );
-
-    this.domNode.childNodes.forEach((node) => this.domNode.removeChild(node));
-    this.domNode.setAttribute('contenteditable', 'false');
-    this.domNode.style.cursor = 'pointer';
-    this.domNode.addEventListener('click', () => {
-      console.log('click', this.domNode);
-      editableElement.value = Element.fromJSON(textable.schema, textable.schema.getElement(this.domNode.getAttribute('id')).toJSON());
-    });
-    try {
-      const element = textable.schema.getElement(this.domNode.getAttribute('id'));
-      this.domNode.innerHTML = element.title || element.type;
-      this.domNode.setAttribute('type', element.type);
-    } catch (e) {
-      console.error(e);
-    }
   }
 
   static create(value) {
@@ -141,6 +129,7 @@ function addElementToEditor() {
 <style lang="scss" scoped>
 .editor::v-deep(el) {
   display: inline;
+  cursor: pointer;
   width: 100px;
   display: inline-block;
   border-bottom: 1px solid black;
