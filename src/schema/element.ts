@@ -84,15 +84,18 @@ export class Element extends Textable {
     // unable to set text on element
   }
 
+  private _isInline: ComputedRef<boolean>;
   get isInline(): boolean {
-    if (['checkbox', 'radio'].includes(this.type)) {
-      return false;
-    }
-    if (['select'].includes(this.type)) {
-      return !this.options.some(option => !!option.text);
-    }
+    this._isInline ??= computed(() => {
+      if (['checkbox', 'radio'].includes(this.type)) {
+        return false;
+      }
+      if (['select'].includes(this.type)) {
+        return !this.options.some(option => !!option.text);
+      }
+    });
 
-    return true;
+    return this._isInline.value;
   }
 
   static fromJSON(schema: Schema, data: object): Element {
