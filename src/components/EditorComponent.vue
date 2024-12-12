@@ -9,8 +9,9 @@ import Quill from "quill"
 import ElementEditorComponent from "./ElementEditorComponent.vue";
 import ModalComponent from "./ModalComponent.vue";
 
-const { textable } = defineProps({
-  textable: Textable
+const { textable, addSectionElement } = defineProps({
+  textable: Textable,
+  addSectionElement: Function,
 })
 
 const editableElement = shallowRef<Element | null>(null);
@@ -82,6 +83,7 @@ function addElementToEditor() {
   const isNew = !editableElement.value.id;
 
   textable.schema.addElement(editableElement.value);
+  addSectionElement && addSectionElement(editableElement.value);
   if (isNew) {
     quillInstance.value.insertEmbed(
       editorSelectionIndex.value,

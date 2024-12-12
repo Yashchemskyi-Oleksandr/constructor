@@ -2,7 +2,7 @@
 import { Element, Value } from "../schema";
 import { reactive, ref, watch } from "vue";
 import TextComponent from "./TextComponent.vue";
-import EditorComponentAdmin from "./EditorComponentAdmin.vue";
+import EditorComponent from "./EditorComponent.vue";
 
 function getCursorPosition(parent, node, offset, stat) {
   if (stat.done) return stat;
@@ -109,15 +109,11 @@ function removeOption(index: number) {
 
 <template>
   <template v-if="inline">
-  teeeest {{ element?.references }}
+    element?.references {{ element?.references }}
     <div v-if="element.type === 'text' && inline" class="inline-input" v-html="value.value"
       @keyup="up"
       contenteditable="true">
     </div>
-    <!-- <select v-else-if="element.type === 'select'" v-model="value.value"
-      :style="{ outline: 'none', border: 'none', 'border-bottom': '1px solid black', padding: '0 5px' }">
-      <option v-for="(option, index) in element.options" :value="index">{{ option.label }}</option>
-    </select> -->
   </template>
   <div v-else class="container-fluid">
     <div class="row align-items-start">
@@ -151,7 +147,8 @@ function removeOption(index: number) {
           </div>
           <div v-if="isAdmin" ref="container">
             <div v-for="(option, index) in element.options" :key="index+1">
-              <EditorComponentAdmin :currElem="element" @update:modelValue="(value) => option.label = value" />
+              <EditorComponent :textable="option" />
+              <button @click="removeOption(index)" v-if="element?.options.length > 1">Видалити</button>
               <label class="form-label">
                 <TextComponent :schema="element.schema" :value="option.label" />
               </label>
