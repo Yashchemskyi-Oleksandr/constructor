@@ -3,7 +3,7 @@
 </script>
 <script setup lang="ts">
 import { QuillEditor } from '@vueup/vue-quill'
-import { computed, onMounted, ref, shallowRef } from "vue";
+import { computed, onMounted, ref, shallowRef, watch } from "vue";
 import { Element, Textable } from "../schema";
 import Quill from "quill"
 import ElementEditorComponent from "./ElementEditorComponent.vue";
@@ -24,6 +24,17 @@ class ElInline extends Quill.imports['blots/embed'] {
 
   constructor(node) {
     super(node);
+
+    watch(
+        () => textable.schema.getElement(this.domNode.getAttribute('id')).type,
+        (type) => {
+          console.log('type', type);
+          this.domNode.innerHTML = type;
+        }, {
+          immediate: true,
+          flush: 'sync'
+        }
+    );
 
     this.domNode.childNodes.forEach((node) => this.domNode.removeChild(node));
     this.domNode.setAttribute('contenteditable', 'false');
