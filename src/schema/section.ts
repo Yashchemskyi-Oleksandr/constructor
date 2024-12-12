@@ -31,10 +31,10 @@ export class Section extends Textable {
     this._hint.value = value;
   }
 
-  private _external: ComputedRef<Set<string>>;
-  get external(): Set<string> {
-      this._external ??= computed(() => new Set(Array.from(this.references)
-          .filter(ref => !this.schema.getElement(ref).isInline)));
+  private _external: ComputedRef<Array<string>>;
+  get external(): Array<string> {
+      this._external ??= computed(() => this.references
+          .filter(ref => !this.schema.getElement(ref).isInline));
       return this._external.value;
   }
 

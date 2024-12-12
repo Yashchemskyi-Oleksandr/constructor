@@ -12,14 +12,9 @@ export class Element extends Textable {
   public _delimiter = ref('');
   public _template = ref('');
 
-  private _references: ComputedRef<Set<string>>;
-  get references(): Set<string> {
-    this._references ??= computed(() => {
-      return this.options.reduce((acc, option) => {
-        option.references.forEach(ref => acc.add(ref));
-        return acc;
-      }, new Set<string>());
-    });
+  private _references: ComputedRef<Array<string>>;
+  get references(): Array<string> {
+    this._references ??= computed(() => [...new Set(this.options.map(option => option.references).flat())]);
 
     return this._references.value;
   }
