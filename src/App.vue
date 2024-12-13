@@ -10,13 +10,13 @@ const schema = shallowRef(Schema.fromJSON({
     {
       isRequired: false,
       withHint: false,
-      text: '<p>Hello <el id="1"></el> world <el id="2"></el> radioVal: <el id="4"></el></p>',
+      text: '<p>One element <el id="6"></el> => end</p>',
       elements: []
     },
     {
       isRequired: false,
       withHint: false,
-      text: '<p>One element <el id="5"></el> => end => <el id="4"></el></p>',
+      text: '<p>Hello <el id="1"></el> world <el id="2"></el> radioVal: <el id="4"></el></p>',
       elements: []
     }
   ],
@@ -60,7 +60,18 @@ const schema = shallowRef(Schema.fromJSON({
     title: 'input without references',
     type: 'text',
     value: 'inline input'
-  }
+  },
+  {
+    id: '6',
+    type: 'checkbox',
+    title: "external checkbox",
+    value: [],
+    delimiter: ', ',
+    options: [
+      {label: 'world1'},
+      {label: 'world2', text: ''}
+    ]
+  },
   ]
 }));
 const json = computed(() => {
