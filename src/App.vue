@@ -5,7 +5,7 @@ import {Schema, Section} from "./schema";
 import SectionComponentAdmin from './components/SectionComponentAdmin.vue';
 
 const schema = shallowRef(Schema.fromJSON({
-  latestElementId: 5,
+  latestElementId: 6,
   sections: [
     {
       isRequired: false,
