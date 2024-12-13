@@ -13,7 +13,7 @@ const {section, schema, index} = defineProps({
 
 const MAX_HINT_LENGTH = 200;
 const tabs = ['User', 'Admin', 'Preview'];
-const currentTab = ref('User');
+const currentTab = ref('Admin');
 
 function getExternalElements(text: string, elements: Element[] = []): Element[] {
   console.log('ASAAAAAAA');
@@ -33,14 +33,11 @@ const externalElements = computed(()=>{
   return getExternalElements(section.text, [])
 })
 
-function removeElement(id: string) {
-  schema.elements.delete(id);
-}
-
 </script>
 
 <template>
   <div :class="['card', {isRequired: section?.isRequired}]" style="border: 1px solid red; margin: 5px auto">
+    <button @click="schema?.copySection(index)">Copy section</button>
     <button @click="schema?.removeSectionByIndex(index)">Remove section</button>
     <div class="card-header" style="background: lightgrey">
       <button
@@ -87,9 +84,18 @@ function removeElement(id: string) {
     </div>
     <div v-if="currentTab === 'User'" class="card-body">
       <h1>user</h1>
-      <TextComponent :value="section.text" :schema="schema"/>
-      <div v-for="element in externalElements" :key="element.id">
-        <ElementComponent :element="element" :inline="false"/>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-right: 1px solid;">
+        <div>
+          <h1>TextComponent</h1>
+          <TextComponent :value="section.text" :schema="schema"/>
+        </div>
+        <div>
+          <h1>ElementComponent</h1>
+          <div v-for="element in externalElements" :key="element.id">
+            <ElementComponent :element="element" />
+            <hr>
+          </div>
+        </div>
       </div>
     </div>
     <div v-if="currentTab === 'Admin'">
@@ -104,7 +110,6 @@ function removeElement(id: string) {
           <h4>References list => {{ section.references }}</h4>
           <div v-for="(elementId, index) in section?.references" :key="index" style="margin-bottom: 10px;">
             <ElementComponent :element="section.schema.getElement(elementId)" :inline="false" isAdmin />
-            <button type="button" @click="removeElement(elementId)">Видалити елемент</button>
           </div>
         </div>
       </div>

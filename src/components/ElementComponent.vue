@@ -138,7 +138,6 @@ function removeOption(index: number) {
             </label>
 
             <input type="text" v-model="option.label" placeholder="Варіант" />
-            <button @click="removeOption(index)" v-if="element?.options.length > 1 && isAdmin">Видалити опцію</button>
           </div>
           <!-- IS ADMIN -->
           <!-- <div v-else-if="isAdmin" v-for="(option, index) in element.options" :key="index+1">
@@ -148,7 +147,7 @@ function removeOption(index: number) {
           <div v-if="isAdmin" ref="container">
             <div v-for="(option, index) in element.options" :key="index+1">
               <EditorComponent :textable="option" />
-              <button @click="removeOption(index)" v-if="element?.options.length > 1">Видалити</button>
+              <button @click="removeOption(index)" v-if="element?.options.length > 1 && isAdmin">Видалити опцію</button>
               <label class="form-label">
                 <TextComponent :schema="element.schema" :value="option.label" />
               </label>

@@ -12,6 +12,20 @@ export class Schema {
     return this;
   }
 
+  copySection(index: number) {
+    const originalSection = this.sections[index];
+  
+    if (!originalSection) {
+      throw new Error(`Section at index ${index} does not exist`);
+    }
+  
+    const sectionData = originalSection.toJSON();
+    const newSection = Section.fromJSON(this, sectionData);
+    this.addSection(newSection);
+  
+    return newSection;
+  }
+
   removeSectionByIndex(index: number): this {
     if (index < 0 || index >= this.sections.length) {
       throw new Error(`Index ${index} is out of bounds`);
