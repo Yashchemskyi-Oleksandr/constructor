@@ -118,7 +118,7 @@ function removeOption(index: number) {
   <div v-else class="container-fluid">
     <div class="row align-items-start">
       <div class="col-4">
-        <label class="form-label">{{ element.title }}</label>
+        <label class="form-label">{{ element.title ?? element.type }}</label>
         <div>
           <input class="form-control" v-if="element.type === 'text'" v-model="element.value">
           <select class="form-control" v-else-if="element.type === 'select' && !isAdmin" v-model="element.value"
@@ -138,13 +138,13 @@ function removeOption(index: number) {
             </label>
 
             <input type="text" v-model="option.label" placeholder="Варіант" />
-            <button @click="removeOption(index)" v-if="element?.options.length > 1">Видалити</button>
+            <button @click="removeOption(index)" v-if="element?.options.length > 1 && isAdmin">Видалити опцію</button>
           </div>
           <!-- IS ADMIN -->
-          <div v-else-if="isAdmin" v-for="(option, index) in element.options" :key="index+1">
+          <!-- <div v-else-if="isAdmin" v-for="(option, index) in element.options" :key="index+1">
             <input type="text" v-model="option.label" placeholder="Варіант" />
             <button @click="removeOption(index)" v-if="element?.options.length > 1">Видалити</button>
-          </div>
+          </div> -->
           <div v-if="isAdmin" ref="container">
             <div v-for="(option, index) in element.options" :key="index+1">
               <EditorComponent :textable="option" />
@@ -154,7 +154,7 @@ function removeOption(index: number) {
               </label>
             </div>
           </div>
-          <button type="button" @click="addOption">add option</button>
+          <button v-if="isAdmin && ['radio', 'select', 'checkbox'].includes(element?.type)" type="button" @click="addOption">Додати опцію</button>
         </div>
       </div>
     </div>

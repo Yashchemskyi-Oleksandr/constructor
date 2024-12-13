@@ -29,22 +29,19 @@ const externalElements = computed(()=>{
   return getExternalElements(section.text, [])
 })
 
-const currentElement = shallowReactive<any>([]);
 const MAX_HINT_LENGTH = 200;
 
-const addSectionElement = (newElement: Element) => {
-  currentElement.splice(0, 1, newElement);
+function removeElement(id: string) {
+  schema.elements.delete(id);
 }
 
-const removeAdditionalElement = () => {
-  currentElement.splice(0);
-}
 </script>
 
 <template>
   <div :class="['card', {isRequired: section?.isRequired}]" style="border: 1px solid red; margin: 5px auto">
-    <div class="card-header" style="background: lightgrey">Text
-      <button>Preview</button>
+    <div class="card-header" style="background: lightgrey">
+      <button>User</button>
+      <button>Admin</button>
     </div>
     <button @click="schema?.removeSectionByIndex(index)">Remove section</button>
     <div>
@@ -81,21 +78,17 @@ const removeAdditionalElement = () => {
         <ElementComponent :element="element" :inline="false"/>
       </div>
     </div>
-    <div>
+    <div style="margin-top: 50px;">
       <h1>admin</h1>
       <div class="card-footer" v-html="section.getText()"></div>
-      <EditorComponent :textable="section" :addSectionElement="addSectionElement" :removeAdditionalElement="removeAdditionalElement" />
+      <EditorComponent :textable="section" />
       <br />
-    <div>
-        <h4>Опції (синхронізовані):</h4>
-        currentElement?.options {{ currentElement?.options }}
-      </div>
       <div class="selector">
-        currentElement {{currentElement}}
-        <div class="radio-options" style="margin-top: 20px;">
-          <h4>Опції для Radio</h4>
-          <div v-for="(element, index) in currentElement" :key="index" style="margin-bottom: 10px;">
-            <ElementComponent :element="element" :inline="false" isAdmin/>
+        <div class="radio-options" style="margin-top: 50px;">
+          <h4>References list => {{ section.references }}</h4>
+          <div v-for="(elementId, index) in section?.references" :key="index" style="margin-bottom: 10px;">
+            <ElementComponent :element="section.schema.getElement(elementId)" :inline="false" isAdmin />
+            <button type="button" @click="removeElement(elementId)">Видалити елемент</button>
           </div>
         </div>
       </div>
