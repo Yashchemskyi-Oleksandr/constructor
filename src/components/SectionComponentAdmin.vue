@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, shallowReactive} from "vue";
+import {computed, ref} from "vue";
 import {Element, Schema, Section} from "../schema";
 import EditorComponent from "./EditorComponent.vue";
 import ElementComponent from "./ElementComponent.vue";
@@ -10,6 +10,10 @@ const {section, schema, index} = defineProps({
   schema: Schema,
   index: Number,
 });
+
+const MAX_HINT_LENGTH = 200;
+const tabs = ['User', 'Admin', 'Preview'];
+const currentTab = ref('User');
 
 function getExternalElements(text: string, elements: Element[] = []): Element[] {
   console.log('ASAAAAAAA');
@@ -29,8 +33,6 @@ const externalElements = computed(()=>{
   return getExternalElements(section.text, [])
 })
 
-const MAX_HINT_LENGTH = 200;
-
 function removeElement(id: string) {
   schema.elements.delete(id);
 }
@@ -39,23 +41,35 @@ function removeElement(id: string) {
 
 <template>
   <div :class="['card', {isRequired: section?.isRequired}]" style="border: 1px solid red; margin: 5px auto">
-    <div class="card-header" style="background: lightgrey">
-      <button>User</button>
-      <button>Admin</button>
-    </div>
     <button @click="schema?.removeSectionByIndex(index)">Remove section</button>
-    <div>
-      <input 
-        class="form-check-input" 
-        type="checkbox" 
-        v-model="section.isRequired" 
-      />
-      <div>
+    <div class="card-header" style="background: lightgrey">
+      <button
+        v-for="tab in tabs"
+        :key="tab"
+        :class="{ active: currentTab === tab }"
+        @click="currentTab = tab"
+      >
+        {{ tab }}
+      </button>
+    </div>
+    <div class="d-inline-flex gap-3">
+      <label>
+        isRequired
         <input 
           class="form-check-input" 
-          type="checkbox"
-          v-model="section.withHint"
+          type="checkbox" 
+          v-model="section.isRequired" 
         />
+      </label>
+      <div>
+        <label>
+          Додати підказку
+          <input 
+            class="form-check-input" 
+            type="checkbox"
+            v-model="section.withHint"
+          />
+        </label>
         <div v-if="section.withHint" class="hint-section mt-3">
           <label for="hintTextarea">Підказка:</label>
           <textarea 
@@ -71,17 +85,19 @@ function removeElement(id: string) {
         </div>
       </div>
     </div>
-    <div class="card-body">
+    <div v-if="currentTab === 'User'" class="card-body">
       <h1>user</h1>
       <TextComponent :value="section.text" :schema="schema"/>
       <div v-for="element in externalElements" :key="element.id">
         <ElementComponent :element="element" :inline="false"/>
       </div>
     </div>
-    <div style="margin-top: 50px;">
+    <div v-if="currentTab === 'Admin'">
       <h1>admin</h1>
-      <div class="card-footer" v-html="section.getText()"></div>
-      <EditorComponent :textable="section" />
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <EditorComponent :textable="section" />
+        <div class="card-footer" v-html="section.getText()"></div>
+      </div>
       <br />
       <div class="selector">
         <div class="radio-options" style="margin-top: 50px;">
