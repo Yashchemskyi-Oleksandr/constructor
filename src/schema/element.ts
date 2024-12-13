@@ -7,6 +7,7 @@ export class Element extends Textable {
   public id: string;
   private _type = ref<'text' | 'textarea' | 'number' | 'checkbox' | 'select' | 'radio'>();
   private _title = ref('');
+  private _description = ref('');
   private _value = ref();
   public options = shallowReactive(new Array<Value>());
   public _delimiter = ref('');
@@ -59,6 +60,14 @@ export class Element extends Textable {
     return this._title.value;
   }
 
+  set description(value: string) {
+    this._description.value = value;
+  }
+
+  get description() {
+    return this._description.value;
+  }
+
   get text() {
     if (['select', 'radio'].includes(this.type)) {
       const option = this.options[+(this.value ?? 0)];
@@ -98,6 +107,7 @@ export class Element extends Textable {
     element.id = data['id'];
     element._type.value = data['type'];
     element._title.value = data['title'];
+    element._description.value = data['description'];
     element._value.value = element.type === 'checkbox' ? new Set(data['value'] ?? []) : data['value'];
     if (['select', 'radio', 'checkbox'].includes(element.type) && Array.isArray(data['options'])) {
       data['options'].forEach((option: object) => {
@@ -118,6 +128,7 @@ export class Element extends Textable {
       id: this.id,
       type: this.type,
       title: this.title,
+      description: this.description,
       value: this.type === 'checkbox' ? Array.from((this.value as Set<any>).values()) : this.value,
       ...(['select', 'radio', 'checkbox'].includes(this.type) && { options: this.options }),
       ...(this.type === 'checkbox' && {

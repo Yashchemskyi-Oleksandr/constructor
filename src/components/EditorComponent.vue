@@ -117,8 +117,12 @@ function addElementToEditor() {
         </select>
       </div>
       <div class="form-group">
-        <label for="title">Title:</label>
-        <input v-model="editableElement.title">
+        <label for="title">Title:
+          <input v-model="editableElement.title">
+        </label>
+        <label for="title">Description:
+          <input v-model="editableElement.description">
+        </label>
       </div>
     </div>
   </ModalComponent>
