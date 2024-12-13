@@ -109,7 +109,6 @@ function removeOption(index: number) {
 
 <template>
   <template v-if="inline">
-    element?.references {{ element?.references }}
     <div v-if="element.type === 'text' && inline" class="inline-input" v-html="value.value"
       @keyup="up"
       contenteditable="true">

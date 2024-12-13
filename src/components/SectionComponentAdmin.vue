@@ -107,7 +107,6 @@ const externalElements = computed(()=>{
       <br />
       <div class="selector">
         <div class="radio-options" style="margin-top: 50px;">
-          <h4>References list => {{ section.references }}</h4>
           <div v-for="(elementId, index) in section?.references" :key="index" style="margin-bottom: 10px;">
             <ElementComponent :element="section.schema.getElement(elementId)" :inline="false" isAdmin />
           </div>

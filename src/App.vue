@@ -16,7 +16,7 @@ const schema = shallowRef(Schema.fromJSON({
     {
       isRequired: false,
       withHint: false,
-      text: '<p>One element <el id="5"></el>',
+      text: '<p>One element <el id="5"></el> => end => <el id="4"></el></p>',
       elements: []
     }
   ],
@@ -51,15 +51,15 @@ const schema = shallowRef(Schema.fromJSON({
     title: "external radio",
     value: null,
     options: [
-      {label: 'world122'},
-      {label: 'world222', text: 'Select2: <el id="1"></el> testRadio'}
+      {label: 'radio 1'},
+      {label: 'radio 2', text: 'Select2: <el id="1"></el> testRadio'}
     ]
   },
   {
     id: '5',
     title: 'input without references',
     type: 'text',
-    value: 'world'
+    value: 'inline input'
   }
   ]
 }));
