@@ -97,6 +97,8 @@ export class Element extends Textable {
       if (['select'].includes(this.type)) {
         return !this.options.some(option => !!option.text);
       }
+
+      return true;
     });
 
     return this._isInline.value;
